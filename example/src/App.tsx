@@ -21,7 +21,7 @@ class V extends React.Component<any, any> {
 
 export default function App() {
   const onTouch = (event: TouchEventProp) => {
-    console.log('[App.onTouch]', event.nativeEvent.touchType);
+    console.log('[App.onTouch]', event.nativeEvent);
   };
 
   const onPageChange = (event: PageChangeProp) => {

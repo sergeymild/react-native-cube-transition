@@ -10,5 +10,5 @@ RCT_EXPORT_VIEW_PROPERTY(onPageChange, RCTDirectEventBlock)
 
 @interface RCT_EXTERN_MODULE(CubeItemViewManager, RCTViewManager)
 
-RCT_EXPORT_VIEW_PROPERTY(onModalDismiss, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPrepareForRender, RCTDirectEventBlock)
 @end

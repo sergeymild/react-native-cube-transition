@@ -46,7 +46,7 @@ const CubeItemView: React.FC<PropsWithChildren<{ index: number }>> = (
   const event = () => setShouldRender(true);
   return (
     <_CubeItemView
-      onModalDismiss={event}
+      onPrepareForRender={event}
       nativeID={props.index.toString()}
       style={styles.item}
       children={shouldRender ? props.children : null}

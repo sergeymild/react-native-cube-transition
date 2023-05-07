@@ -26,7 +26,7 @@ class CubeItemViewManager: RCTViewManager {
 
 class CubeItem: RCTView {
     @objc
-    var onModalDismiss: RCTDirectEventBlock?
+    var onPrepareForRender: RCTDirectEventBlock?
     var rendered = false
     
     override init(frame: CGRect) {
@@ -38,7 +38,7 @@ class CubeItem: RCTView {
     }
     
     func onRender() {
-        self.onModalDismiss!([:])
+        self.onPrepareForRender!([:])
     }
 }
 
@@ -87,7 +87,7 @@ class CubeTransitionView : UIView, CubeTransitionViewDelegate {
     }
     
     func pageDidChanged(index: Int, direction: Direction) {
-        onPageChange?(["page": index, "direction": direction == Direction.right ? "right" : "left"])
+        onPageChange?(["page": index])
     }
     
     

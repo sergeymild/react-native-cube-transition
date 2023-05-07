@@ -12,6 +12,6 @@ class CubeTransitionPackage : ReactPackage {
   }
 
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
-    return listOf(CubeTransitionViewManager())
+    return listOf(CubeTransitionViewManager(), CubeItemViewManager())
   }
 }
