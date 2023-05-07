@@ -1,11 +1,16 @@
 # react-native-cube-transition
 
-react-native-cube-transition
+## About the project
+Replicate easily the Instagram story cube animation for React Native
+
+![](./preview.gif)
+
+[Example](https://github.com/sergeymild/react-native-cube-transition/blob/main/example/src/App.tsx)
 
 ## Installation
 
 ```sh
-npm install react-native-cube-transition
+"react-native-cube-transition":"react-native-cube-transition#0.0.1"
 ```
 
 ## Usage
@@ -15,7 +20,22 @@ import { CubeTransitionView } from "react-native-cube-transition";
 
 // ...
 
-<CubeTransitionView color="tomato" />
+const onTouch = (event: TouchEventProp) => {
+  console.log('[App.onTouch]', event.nativeEvent);
+};
+
+const onPageChange = (event: PageChangeProp) => {
+  console.log('[App.PageChangeProp]', event.nativeEvent);
+};
+
+<CubeTransitionView
+  style={styles.box}
+  onTouch={onTouch}
+  onPageChange={onPageChange}
+>
+<View style={{ ...styles.size, backgroundColor: 'black' }} />
+<View style={{ ...styles.size, backgroundColor: 'orange' }} />
+</CubeTransitionView>
 ```
 
 ## Contributing
