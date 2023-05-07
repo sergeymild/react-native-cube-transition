@@ -1,20 +1,28 @@
 package com.cubetransition
 
-import android.graphics.Color
 import android.view.View
-import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
 
-class CubeTransitionViewManager : SimpleViewManager<View>() {
+class CubeTransitionViewManager : ViewGroupManager<CubeView>() {
   override fun getName() = "CubeTransitionView"
 
-  override fun createViewInstance(reactContext: ThemedReactContext): View {
-    return View(reactContext)
+  override fun createViewInstance(reactContext: ThemedReactContext): CubeView {
+    return CubeView(reactContext)
   }
 
-  @ReactProp(name = "color")
-  fun setColor(view: View, color: String) {
-    view.setBackgroundColor(Color.parseColor(color))
+  @ReactProp(name = "totalCount")
+  fun totalCount(view: CubeView, count: Int) {
+    view.totalCount = count
+  }
+
+  override fun addView(parent: CubeView, child: View, index: Int) {
+    //super.addView(parent, child, index)
+    parent.views.add(child)
+    if (parent.totalCount == parent.views.size) {
+      parent.initialize()
+    }
+
   }
 }

@@ -1,36 +1,71 @@
+import React
+
 @objc(CubeTransitionViewManager)
 class CubeTransitionViewManager: RCTViewManager {
-
-  override func view() -> (CubeTransitionView) {
-    return CubeTransitionView()
-  }
-
-  @objc override static func requiresMainQueueSetup() -> Bool {
-    return false
-  }
+    
+    override func view() -> (CubeTransitionView) {
+        return CubeTransitionView()
+    }
+    
+    @objc override static func requiresMainQueueSetup() -> Bool {
+        return false
+    }
 }
 
-class CubeTransitionView : UIView {
-
-  @objc var color: String = "" {
-    didSet {
-      self.backgroundColor = hexStringToUIColor(hexColor: color)
+class CubeTransitionView : UIView, CubeTransitionViewDelegate {
+    
+    @objc
+    var totalCount: NSNumber?
+    
+    fileprivate var childViews = [UIView]()
+    private var transitionView = CubeTransitionInfiniteView(frame: .zero)
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        addSubview(transitionView)
+        transitionView.delegate = self
     }
-  }
-
-  func hexStringToUIColor(hexColor: String) -> UIColor {
-    let stringScanner = Scanner(string: hexColor)
-
-    if(hexColor.hasPrefix("#")) {
-      stringScanner.scanLocation = 1
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-    var color: UInt32 = 0
-    stringScanner.scanHexInt32(&color)
-
-    let r = CGFloat(Int(color >> 16) & 0x000000FF)
-    let g = CGFloat(Int(color >> 8) & 0x000000FF)
-    let b = CGFloat(Int(color) & 0x000000FF)
-
-    return UIColor(red: r / 255.0, green: g / 255.0, blue: b / 255.0, alpha: 1)
-  }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        transitionView.frame = .init(origin: .zero, size: frame.size)
+        transitionView.initialize()
+    }
+    
+    override func didSetProps(_ changedProps: [String]!) {
+        super.didSetProps(changedProps)
+    }
+    
+    func pageView(atIndex: Int) -> UIView? {
+        if atIndex < 0 { return nil }
+        if atIndex >= childViews.count { return nil }
+        let v = childViews[atIndex]
+        v.frame = .init(origin: .zero, size: RCTScreenSize())
+        return v
+    }
+    
+    func numberofPages() -> Int {
+        childViews.count
+    }
+    
+    func pageDidChanged(index: Int, direction: Direction) {
+        
+    }
+    
+    
+    override func addSubview(_ view: UIView) {
+        if (view is CubeTransitionInfiniteView) {
+            super.addSubview(view)
+        } else {
+            childViews.append(view)
+            if childViews.count == (totalCount?.intValue ?? -1) {
+                debugPrint("||----", childViews.count)
+                transitionView.reloadData()
+            }
+        }
+    }
 }
