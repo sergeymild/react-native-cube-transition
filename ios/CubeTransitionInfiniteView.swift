@@ -12,10 +12,15 @@ public enum Direction: Int {
     case undetermined = 0, left, right, bottomUp, topDown
 }
 
+public enum GestureEvent: String {
+    case start, changed, end
+}
+
 public protocol CubeTransitionViewDelegate: NSObject {
     func pageView(atIndex: Int) -> UIView?
     func numberofPages() -> Int
     func pageDidChanged(index: Int, direction: Direction)
+    func onGesture(event: GestureEvent)
 }
 
 let kCompletionDuration: CFTimeInterval = 0.25
@@ -86,19 +91,33 @@ public class CubeTransitionInfiniteView: UIView {
         }
         gestureSpeedForPageFlipping = frame.width
         
-        preDirection = Direction.undetermined
+        preDirection = .undetermined
+        addGestureRecognizer(UIPanGestureRecognizer(
+            target: self,
+            action: #selector(handlePanGesture)
+        ))
         
-        let gestureRecognizer:UIPanGestureRecognizer = UIPanGestureRecognizer.init(target: self, action: #selector(handlePanGesture))
-        self.addGestureRecognizer(gestureRecognizer)
+       
+    }
+    
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        delegate?.onGesture(event: .start)
+    }
+    
+    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        delegate?.onGesture(event: .end)
     }
     
     
-    @objc func handlePanGesture(_gestureRecognizer: UIPanGestureRecognizer) {
-        if (isAnimationOn) {
-            return
+    @objc
+    func handlePanGesture(gesture: UIPanGestureRecognizer) {
+        if (isAnimationOn) { return }
+        if gesture.state == .changed {
+            delegate?.onGesture(event: .changed)
         }
         
-        let translation = _gestureRecognizer.translation(in: self)
+        let translation = gesture.translation(in: self)
         
         self.determineDirection(fromTranslation:translation)
         
@@ -107,22 +126,18 @@ public class CubeTransitionInfiniteView: UIView {
             self.resetAnimatedSubViews()
         }
         
-        if self.shouldDetermineAnimatedView(gestureRecognizer: _gestureRecognizer) {
+        if self.shouldDetermineAnimatedView(gestureRecognizer: gesture) {
             self.determineAnimatedSubViews()
         }
         preDirection = direction
         
-        if (self.isDirectionChanged()) {
-            return
-        }
-        
-        if (!self.isHorizontalPanGesture()) {
-            return
-        }
+        if (isDirectionChanged()) { return }
+        if (!isHorizontalPanGesture()) { return }
         
         
-        if (_gestureRecognizer.state == .ended) {
-            let velocity = _gestureRecognizer.velocity(in: self)
+        if (gesture.state == .ended) {
+            delegate?.onGesture(event: .end)
+            let velocity = gesture.velocity(in: self)
             self.onGestureEnded(translation: translation, velocity: velocity)
             return
         }
@@ -203,6 +218,7 @@ public class CubeTransitionInfiniteView: UIView {
             let x = CGFloat(forIndex) * frame.width
             tView.frame = CGRect(x: x, y: 0, width: frame.width, height: frame.height)
             self.addSubview(tView)
+            (tView as? CubeItem)?.onRender()
             subviewCache[forIndex] = tView
             return tView
         }

@@ -12,10 +12,44 @@ class CubeTransitionViewManager: RCTViewManager {
     }
 }
 
+@objc(CubeItemViewManager)
+class CubeItemViewManager: RCTViewManager {
+    
+    override func view() -> (CubeItem) {
+        return CubeItem()
+    }
+    
+    @objc override static func requiresMainQueueSetup() -> Bool {
+        return false
+    }
+}
+
+class CubeItem: RCTView {
+    @objc
+    var onModalDismiss: RCTDirectEventBlock?
+    var rendered = false
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func onRender() {
+        self.onModalDismiss!([:])
+    }
+}
+
 class CubeTransitionView : UIView, CubeTransitionViewDelegate {
     
     @objc
     var totalCount: NSNumber?
+    @objc
+    var onTouch: RCTDirectEventBlock?
+    @objc
+    var onPageChange: RCTDirectEventBlock?
     
     fileprivate var childViews = [UIView]()
     private var transitionView = CubeTransitionInfiniteView(frame: .zero)
@@ -36,10 +70,6 @@ class CubeTransitionView : UIView, CubeTransitionViewDelegate {
         transitionView.initialize()
     }
     
-    override func didSetProps(_ changedProps: [String]!) {
-        super.didSetProps(changedProps)
-    }
-    
     func pageView(atIndex: Int) -> UIView? {
         if atIndex < 0 { return nil }
         if atIndex >= childViews.count { return nil }
@@ -48,12 +78,16 @@ class CubeTransitionView : UIView, CubeTransitionViewDelegate {
         return v
     }
     
+    func onGesture(event: GestureEvent) {
+        onTouch?(["touchType": event.rawValue])
+    }
+    
     func numberofPages() -> Int {
         childViews.count
     }
     
     func pageDidChanged(index: Int, direction: Direction) {
-        
+        onPageChange?(["page": index, "direction": direction == Direction.right ? "right" : "left"])
     }
     
     
@@ -63,7 +97,6 @@ class CubeTransitionView : UIView, CubeTransitionViewDelegate {
         } else {
             childViews.append(view)
             if childViews.count == (totalCount?.intValue ?? -1) {
-                debugPrint("||----", childViews.count)
                 transitionView.reloadData()
             }
         }
