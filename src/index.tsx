@@ -20,7 +20,6 @@ export type TouchEventProp = NativeSyntheticEvent<{
 }>;
 export type PageChangeProp = NativeSyntheticEvent<{
   page: number;
-  direction: 'left' | 'right';
 }>;
 interface CubeTransitionProps extends PropsWithChildren<any> {
   style: ViewStyle;

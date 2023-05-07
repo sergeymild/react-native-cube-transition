@@ -20,21 +20,28 @@ import { CubeTransitionView } from "react-native-cube-transition";
 
 // ...
 
+// type TouchEventProp = NativeSyntheticEvent<{
+//    touchType: 'start' | 'change' | 'end';
+// }>;
 const onTouch = (event: TouchEventProp) => {
   console.log('[App.onTouch]', event.nativeEvent);
 };
 
+// type PageChangeProp = NativeSyntheticEvent<{
+//    page: number;
+// }>;
 const onPageChange = (event: PageChangeProp) => {
   console.log('[App.PageChangeProp]', event.nativeEvent);
 };
 
+// pages will load lazily while scroll
 <CubeTransitionView
   style={styles.box}
   onTouch={onTouch}
   onPageChange={onPageChange}
 >
-<View style={{ ...styles.size, backgroundColor: 'black' }} />
-<View style={{ ...styles.size, backgroundColor: 'orange' }} />
+  <View style={{ ...styles.size, backgroundColor: 'black' }} />
+  <View style={{ ...styles.size, backgroundColor: 'orange' }} />
 </CubeTransitionView>
 ```
 
