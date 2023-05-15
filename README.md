@@ -10,7 +10,7 @@ Replicate easily the Instagram story cube animation for React Native
 ## Installation
 
 ```sh
-"react-native-cube-transition":"react-native-cube-transition#0.0.1"
+"react-native-cube-transition":"sergeymild/react-native-cube-transition#0.1.0"
 ```
 
 ## Usage
